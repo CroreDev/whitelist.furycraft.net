@@ -277,7 +277,7 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        .feature-card h4 {
+        .feature-card h3 {
             font-size: 1rem;
             margin-bottom: 8px;
             color: #fff;
@@ -415,7 +415,7 @@
 
 <main>
     <!-- PAGE 1: HOME -->
-    <div id="home" class="page active">
+    <section id="home" class="page active">
         <div class="glass-panel" style="text-align: center;">
             <div class="police-strobe-bar"></div>
             
@@ -426,48 +426,48 @@
 
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h4>⚖️ Judicial Courts</h4>
+                    <h3>⚖️ Judicial Courts</h3>
                     <p>File lawsuits, hire attorneys, and settle civil claims in court.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🚨 Emergency Services</h4>
+                    <h3>🚨 Emergency Services</h3>
                     <p>Join the LSPD, EMS Doctors, or Fire & Rescue Divisions.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>💼 Civilian Economy</h4>
+                    <h3>💼 Civilian Economy</h3>
                     <p>Run businesses, drive taxis, public buses, or culinary staff.</p>
                 </div>
             </div>
 
             <button class="btn-primary" onclick="switchTab('apply', 'bg-apply', document.querySelectorAll('.nav-btn')[2])">Start Whitelist Application</button>
         </div>
-    </div>
+    </section>
 
     <!-- PAGE 2: RULES -->
-    <div id="rules" class="page">
+    <section id="rules" class="page">
         <div class="glass-panel">
             <div class="police-strobe-bar"></div>
             <h2 style="font-family:'Cinzel'; font-size:2rem; margin-bottom:20px; text-align:left;">CITY LAWS & GUIDELINES</h2>
             
             <div style="display:flex; flex-direction:column; gap:16px; text-align:left;">
                 <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid #fff;">
-                    <h4 style="color:#fff; margin-bottom:4px;">1. Value Your Life (NVL)</h4>
+                    <h3 style="color:#fff; margin-bottom:4px; font-size: 1.1rem;">1. Value Your Life (NVL)</h3>
                     <p style="color:var(--text-muted); font-size:0.9rem;">You must value your character's life at all times when threatened with weapons or fatal situations.</p>
                 </div>
                 <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid var(--strobe-red);">
-                    <h4 style="color:#fff; margin-bottom:4px;">2. Metagaming & Powergaming</h4>
+                    <h3 style="color:#fff; margin-bottom:4px; font-size: 1.1rem;">2. Metagaming & Powergaming</h3>
                     <p style="color:var(--text-muted); font-size:0.9rem;">Using out-of-game Discord info or forcing actions on players without RP option is strictly forbidden.</p>
                 </div>
                 <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid var(--strobe-blue);">
-                    <h4 style="color:#fff; margin-bottom:4px;">3. Court & Legal System Integrity</h4>
+                    <h3 style="color:#fff; margin-bottom:4px; font-size: 1.1rem;">3. Court & Legal System Integrity</h3>
                     <p style="color:var(--text-muted); font-size:0.9rem;">All lawsuits and civil lawsuits must be officially filed via the discord court system with evidence.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- PAGE 3: WHITELIST FORM -->
-    <div id="apply" class="page">
+    <section id="apply" class="page">
         <div class="glass-panel">
             <div class="police-strobe-bar"></div>
             <h2 style="font-family:'Cinzel'; font-size:2rem; margin-bottom:6px; text-align:left;">WHITELIST REGISTRATION</h2>
@@ -477,7 +477,7 @@
                 <div class="form-grid">
                     <div class="field-group full-width">
                         <label for="discordId">Discord User ID * <span>Right-click profile -> Copy User ID</span></label>
-                        <input type="text" id="discordId" placeholder="e.g. 1480932685739462729" required>
+                        <input type="text" id="discordId" placeholder="e.g. 1480932685739462729" pattern="[0-9]{17,20}" title="Please enter a valid Discord User ID (17-20 digits)" required>
                     </div>
 
                     <div class="field-group">
@@ -500,12 +500,12 @@
 
                     <div class="field-group">
                         <label for="age">Character Age *</label>
-                        <input type="text" id="age" placeholder="e.g. 24" required>
+                        <input type="number" id="age" min="18" max="100" placeholder="e.g. 24" required>
                     </div>
 
                     <div class="field-group full-width">
                         <label for="backstory">Character Backstory Brief *</label>
-                        <textarea id="backstory" rows="4" placeholder="Briefly describe who your character is and their backstory in the city..." required></textarea>
+                        <textarea id="backstory" rows="4" placeholder="Briefly describe who your character is and their backstory in the city..." minlength="30" required></textarea>
                     </div>
                 </div>
 
@@ -514,11 +514,12 @@
 
             <div id="toast" class="toast"></div>
         </div>
-    </div>
+    </section>
 </main>
 
 <script>
-    // Updated Discord Webhook URL
+    // Discord Webhook URL
+    // Note: For production, routing this request through a backend server or cloud function is recommended to protect your webhook.
     const WEBHOOK_URL = "https://discord.com/api/webhooks/1532595835328790538/IbWtA468TSq7Z30ayDV9iFgiaPsNLZwzneyoEo70nonBaya02AI7OuURAWTwlvvLfsU8";
 
     // Fallback logo generator if logo.jpg isn't found
