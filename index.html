@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuryCraft RP — Official Whitelist & Citizen Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #090a0f;
+            --accent-blue: #00d2ff;
+            --accent-red: #ff2a5f;
+            --accent-glow: rgba(0, 210, 255, 0.4);
+            --glass-bg: rgba(18, 22, 33, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f3f8;
+            --text-muted: #8a94a6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Ambient Dynamic Glow Backdrop */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(255, 42, 95, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 210, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 18, 28, 1) 0%, var(--bg-dark) 100%);
+            filter: blur(40px);
+        }
+
+        /* Subtle Animated Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Navigation Bar */
+        nav {
+            width: 100%;
+            max-width: 1100px;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .nav-btn {
+            padding: 8px 18px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-btn.active, .nav-btn:hover {
+            color: #fff;
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(255, 42, 95, 0.2));
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Main Container & Page Transitions */
+        main {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glass Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-blue));
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 30%, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.description {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Form Controls */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-blue);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(8, 10, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 15px var(--accent-glow);
+            background: rgba(12, 16, 25, 0.95);
+        }
+
+        /* Primary Action Buttons */
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #00d2ff, #0072ff);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Notification Toast */
+        .toast {
+            display: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .toast.success { background: rgba(87, 242, 135, 0.15); border: 1px solid #57F287; color: #57F287; }
+        .toast.error { background: rgba(237, 66, 69, 0.15); border: 1px solid #ED4245; color: #ED4245; }
+
+        @media (max-width: 650px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .full-width { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+<div class="grid-overlay"></div>
+
+<nav>
+    <div class="brand">
+        <!-- Embedded FC Logo URL -->
+        <img src="https://i.ibb.co/3sX8M8z/Picsart-26-07-27-22-52-13-376.jpg" alt="FuryCraft Logo" class="brand-logo">
+        <span>FURYCRAFT RP</span>
+    </div>
+    <div class="nav-links">
+        <button class="nav-btn active" onclick="switchPage('homePage', this)">Home</button>
+        <button class="nav-btn" onclick="switchPage('rulesPage', this)">Rules</button>
+        <button class="nav-btn" onclick="switchPage('applyPage', this)">Whitelist</button>
+    </div>
+</nav>
+
+<main>
+    <!-- PAGE 1: HOME PAGE -->
+    <div id="homePage" class="page active">
+        <div class="card" style="text-align: center;">
+            <img src="https://i.ibb.co/3sX8M8z/Picsart-26-07-27-22-52-13-376.jpg" alt="FC Big Logo" style="width: 120px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);">
+            <h1>WELCOME TO FURYCRAFT RP</h1>
+            <p class="description">Experience next-level Minecraft Roleplay. Custom judicial courts, dynamic jobs, active emergency departments, and an immersive story driven by players.</p>
+            <button class="btn-submit" onclick="switchPage('applyPage', document.querySelectorAll('.nav-btn')[2])">Start Whitelist Application</button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: RULES PAGE -->
+    <div id="rulesPage" class="page">
+        <div class="card">
+            <h1>ROLEPLAY SERVER GUIDELINES</h1>
+            <p class="description">Please review our baseline rules before submitting your whitelist application.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; text-align: left;">
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border-left: 3px solid var(--accent-blue);">
+                    <strong style="color:#fff;">1. Value Your Life (NVL):</strong> Always act as if your character's life is genuinely at risk.
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border-left: 3px solid var(--accent-red);">
+                    <strong style="color:#fff;">2. Metagaming & Powergaming:</strong> Using out-of-game knowledge or forcing unescapable actions on others is strictly prohibited.
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border-left: 3px solid var(--accent-blue);">
+                    <strong style="color:#fff;">3. Judicial & Court Integrity:</strong> All legal disputes must go through the official court system using proper evidence.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: WHITELIST APPLICATION FORM -->
+    <div id="applyPage" class="page">
+        <div class="card">
+            <h1>WHITELIST REGISTRATION</h1>
+            <p class="description">Fill out your gaming details below. Once approved by staff, you will receive your **Citizen ID Card** directly in your Discord DMs.</p>
+
+            <form id="whitelistForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="discordId">Discord User ID *</label>
+                        <input type="text" id="discordId" placeholder="e.g., 1480932685739462729" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platform">Edition *</label>
+                        <select id="platform" onchange="togglePlatformNotice(this.value)" required>
+                            <option value="Java Edition">Minecraft Java Edition</option>
+                            <option value="Bedrock Edition">Minecraft Bedrock Edition</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ign">In-Game Name (IGN) *</label>
+                        <input type="text" id="ign" placeholder="Exact gamertag" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rpName">Character Name *</label>
+                        <input type="text" id="rpName" placeholder="e.g., Marcus Vance" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Character Age / DOB *</label>
+                        <input type="text" id="age" placeholder="e.g., 24 years old" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="backstory">Character Backstory Brief *</label>
+                        <textarea id="backstory" rows="3" placeholder="Briefly describe who your character is and their goals in the city..." required></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn-submit">Submit Registration</button>
+            </form>
+
+            <div id="toast" class="toast"></div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Replace with your Webhook URL or Bot Endpoint
+    const DISCORD_WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+
+    function switchPage(pageId, btnElement) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(pageId).classList.add('active');
+        if(btnElement) btnElement.classList.add('active');
+    }
+
+    document.getElementById('whitelistForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        const toast = document.getElementById('toast');
+
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Transmitting Data...";
+
+        const payload = {
+            discord_id: document.getElementById('discordId').value.trim(),
+            platform: document.getElementById('platform').value,
+            ign: document.getElementById('ign').value.trim(),
+            rp_name: document.getElementById('rpName').value.trim(),
+            age: document.getElementById('age').value.trim(),
+            backstory: document.getElementById('backstory').value.trim()
+        };
+
+        try {
+            const res = await fetch(DISCORD_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    content: "📥 **NEW WEB WHITELIST SUBMISSION**",
+                    embeds: [{
+                        title: "📝 FuryCraft Web Whitelist Form",
+                        color: 5793266,
+                        fields: [
+                            { name: "Discord ID", value: `<@${payload.discord_id}> (${payload.discord_id})`, inline: true },
+                            { name: "Platform", value: payload.platform, inline: true },
+                            { name: "In-Game Name", value: `\`${payload.ign}\``, inline: true },
+                            { name: "Character Name", value: payload.rp_name, inline: true },
+                            { name: "Age", value: payload.age, inline: true },
+                            { name: "Backstory Brief", value: payload.backstory, inline: false }
+                        ],
+                        footer: { text: "FuryCraft Web Whitelist Portal" }
+                    }]
+                })
+            });
+
+            if(res.ok) {
+                toast.className = "toast success";
+                toast.innerText = "✅ Registration Submitted! Check your Discord DMs for status updates.";
+                toast.style.display = "block";
+                document.getElementById('whitelistForm').reset();
+            } else {
+                throw new Error();
+            }
+        } catch(err) {
+            toast.className = "toast error";
+            toast.innerText = "❌ Submission failed. Please ensure your Discord User ID is correct.";
+            toast.style.display = "block";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Submit Registration";
+        }
+    });
+</script>
+</body>
+</html>
