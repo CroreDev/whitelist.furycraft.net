@@ -518,8 +518,8 @@
 </main>
 
 <script>
-    // ⚠️ REPLACE THIS STRING WITH YOUR BRAND NEW DISCORD WEBHOOK URL ⚠️
-    const WEBHOOK_URL = "PASTE_YOUR_NEW_DISCORD_WEBHOOK_URL_HERE";
+    // Updated Discord Webhook URL
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1532595835328790538/IbWtA468TSq7Z30ayDV9iFgiaPsNLZwzneyoEo70nonBaya02AI7OuURAWTwlvvLfsU8";
 
     // Fallback logo generator if logo.jpg isn't found
     function handleImageError(imgElement) {
@@ -600,7 +600,7 @@
         } catch(err) {
             console.error(err);
             toast.className = "toast error";
-            toast.innerText = "❌ Submission failed. Please generate a NEW Webhook URL in Discord Settings.";
+            toast.innerText = "❌ Submission failed. Please verify your Webhook URL or permissions in Discord Settings.";
             toast.style.display = "block";
         } finally {
             submitBtn.disabled = false;
