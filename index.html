@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FuryCraft RP — Official Citizen & Whitelist Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;600;800&family=Press+Start+2P&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-black: #050608;
-            --panel-bg: rgba(15, 17, 23, 0.85);
-            --panel-border: rgba(255, 255, 255, 0.12);
+            --bg-dark: #07090e;
+            --panel-bg: rgba(12, 16, 24, 0.82);
+            --panel-border: rgba(255, 255, 255, 0.15);
             --text-white: #ffffff;
-            --text-silver: #a0a5b5;
-            --accent-red: #ff2a4b;
-            --accent-blue: #0088ff;
-            --police-glow: linear-gradient(90deg, #ff2a4b 0%, #0088ff 100%);
+            --text-muted: #9aa3b4;
+            --strobe-red: #ff1e43;
+            --strobe-blue: #0077ff;
         }
 
         * {
@@ -26,56 +25,73 @@
         }
 
         body {
-            background-color: var(--bg-black);
+            background-color: var(--bg-dark);
             color: var(--text-white);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
 
-        /* Tactical Background Overlay */
-        .tactical-bg {
+        /* DYNAMIC MINECRAFT BACKGROUND LAYERS */
+        .mc-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: 
-                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 10% 90%, rgba(255, 42, 75, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(0, 136, 255, 0.08) 0%, transparent 40%),
-                #050608;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -3;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out, transform 8s ease-out;
+            transform: scale(1.05);
+            filter: brightness(0.35) contrast(1.15) blur(2px);
+        }
+
+        /* Per-Page Minecraft Landscapes */
+        #bg-home {
+            background-image: url('https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=1920&auto=format&fit=crop'); /* Minecraft Night Scene */
+            opacity: 1;
+            transform: scale(1);
+        }
+        #bg-rules {
+            background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920&auto=format&fit=crop'); /* Deep Nether / Obsidian Vibe */
+        }
+        #bg-apply {
+            background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1920&auto=format&fit=crop'); /* Ender Void Theme */
+        }
+
+        /* Animated Pixel Particle Overlay */
+        .pixel-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 0);
+            background-size: 24px 24px;
             z-index: -2;
-        }
-
-        .grid-pattern {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
             pointer-events: none;
         }
 
-        /* Top Bar: Live Status Header */
+        /* Top Status Bar */
         .top-bar {
             width: 100%;
-            background: #020304;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding: 8px 20px;
+            background: rgba(3, 4, 7, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.8rem;
-            color: var(--text-silver);
+            color: var(--text-muted);
             font-family: 'JetBrains Mono', monospace;
+            backdrop-filter: blur(10px);
+            z-index: 10;
         }
 
         .status-badge {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .status-dot {
@@ -83,17 +99,24 @@
             height: 8px;
             background: #00ff66;
             border-radius: 50%;
-            box-shadow: 0 0 10px #00ff66;
+            box-shadow: 0 0 12px #00ff66;
+            animation: pulse 2s infinite;
         }
 
-        /* Main Navigation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Navigation Header */
         nav {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1100px;
             padding: 20px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 10;
         }
 
         .brand-box {
@@ -102,69 +125,80 @@
             gap: 16px;
         }
 
+        /* Exact Logo Styling */
         .brand-logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            border: 2px solid rgba(255,255,255,0.2);
-            box-shadow: 0 0 20px rgba(255,255,255,0.15);
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.25);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255,255,255,0.2);
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.05) rotate(-2deg);
         }
 
         .brand-text h2 {
             font-family: 'Cinzel', serif;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
+            font-weight: 900;
             letter-spacing: 2px;
             color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }
 
         .brand-text p {
-            font-size: 0.75rem;
-            color: var(--text-silver);
-            letter-spacing: 1px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
             text-transform: uppercase;
         }
 
         .nav-links {
             display: flex;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(0, 0, 0, 0.6);
             padding: 6px;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid var(--panel-border);
+            backdrop-filter: blur(15px);
         }
 
         .nav-btn {
             padding: 10px 22px;
             border: none;
             background: transparent;
-            color: var(--text-silver);
+            color: var(--text-muted);
             font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-btn.active, .nav-btn:hover {
             color: #fff;
-            background: #ffffff15;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 0 12px rgba(255,255,255,0.1);
         }
 
-        /* Container & Page Transitions */
+        /* Main Container & Glass Panels */
         main {
             width: 100%;
-            max-width: 950px;
-            padding: 30px 20px 60px 20px;
+            max-width: 900px;
+            padding: 20px 20px 60px 20px;
+            z-index: 5;
         }
 
         .page {
             display: none;
             opacity: 0;
-            transform: translateY(15px);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .page.active {
@@ -173,47 +207,56 @@
             transform: translateY(0);
         }
 
-        /* Glassmorphism Panel */
         .glass-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
             border: 1px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            border-radius: 24px;
+            padding: 45px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
         }
 
-        .police-stripe {
+        /* Police Lightbar Top Strobe Animation */
+        .police-strobe-bar {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: var(--police-glow);
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--strobe-red) 0%, #000 50%, var(--strobe-blue) 100%);
+            box-shadow: 0 0 15px var(--strobe-red), 0 0 15px var(--strobe-blue);
         }
 
-        /* Hero Landing Styling */
+        /* Hero Banner */
+        .hero-logo-large {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 30px rgba(255,255,255,0.15);
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+
         .hero-title {
             font-family: 'Cinzel', serif;
             font-size: 2.8rem;
-            font-weight: 700;
-            text-align: center;
-            margin-top: 15px;
-            background: linear-gradient(180deg, #ffffff 40%, #7d8597 100%);
+            font-weight: 900;
+            letter-spacing: 3px;
+            background: linear-gradient(180deg, #ffffff 30%, #a0a8b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 2px;
+            margin-bottom: 12px;
         }
 
-        .hero-desc {
-            text-align: center;
-            color: var(--text-silver);
+        .hero-subtitle {
+            color: var(--text-muted);
             font-size: 1.05rem;
             max-width: 650px;
-            margin: 15px auto 35px auto;
+            margin: 0 auto 35px auto;
             line-height: 1.6;
         }
 
-        /* Feature Cards Grid */
+        /* Feature Grid */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -222,26 +265,33 @@
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 20px;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 22px;
+            border-radius: 16px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .feature-card h4 {
             font-size: 1rem;
-            color: #fff;
             margin-bottom: 8px;
+            color: #fff;
         }
 
         .feature-card p {
-            font-size: 0.82rem;
-            color: var(--text-silver);
+            font-size: 0.83rem;
+            color: var(--text-muted);
             line-height: 1.4;
         }
 
-        /* Form Layout */
+        /* Forms Layout */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -254,6 +304,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            text-align: left;
         }
 
         label {
@@ -267,62 +318,64 @@
         }
 
         label span {
-            color: var(--text-silver);
-            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 400;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 14px 16px;
-            background: rgba(5, 6, 8, 0.9);
+            padding: 15px 18px;
+            background: rgba(4, 6, 10, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
+            border-radius: 12px;
             color: #fff;
             font-size: 0.95rem;
-            transition: all 0.25s ease;
+            transition: all 0.3s ease;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #fff;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
             background: #000;
         }
 
-        /* Main Buttons */
+        /* Aesthetic Action Button */
         .btn-primary {
             width: 100%;
             padding: 18px;
+            margin-top: 10px;
             background: #ffffff;
             color: #000;
             border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 0.95rem;
             letter-spacing: 2px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
         }
 
         .btn-primary:hover {
-            background: #e0e0e0;
+            background: #e1e5ee;
             transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(255,255,255,0.25);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.35);
         }
 
         /* Alert Toast */
         .toast {
             display: none;
-            padding: 15px 20px;
-            border-radius: 10px;
+            padding: 16px 20px;
+            border-radius: 12px;
             margin-top: 25px;
             font-weight: 600;
             text-align: center;
         }
-        .toast.success { background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; color: #00ff66; }
-        .toast.error { background: rgba(255, 42, 75, 0.1); border: 1px solid #ff2a4b; color: #ff2a4b; }
+        .toast.success { background: rgba(0, 255, 102, 0.12); border: 1px solid #00ff66; color: #00ff66; }
+        .toast.error { background: rgba(255, 30, 67, 0.12); border: 1px solid #ff1e43; color: #ff1e43; }
 
         @media (max-width: 768px) {
             .feature-grid { grid-template-columns: 1fr; }
@@ -333,28 +386,26 @@
 </head>
 <body>
 
-<div class="tactical-bg"></div>
-<div class="grid-pattern"></div>
+<!-- DYNAMIC MINECRAFT BACKGROUNDS -->
+<div id="bg-home" class="mc-bg"></div>
+<div id="bg-rules" class="mc-bg"></div>
+<div id="bg-apply" class="mc-bg"></div>
+
+<div class="pixel-grid"></div>
 
 <!-- Live Server Status Bar -->
 <div class="top-bar">
     <div class="status-badge">
-        <span class="status-dot"></span> FURYCRAFT RP SERVER ONLINE — IP: <span style="color:#fff;">play.furycraft.fun</span>
+        <span class="status-dot"></span> FURYCRAFT RP — IP: <span style="color:#fff; font-weight:700;">play.furycraft.fun</span>
     </div>
-    <div>PORTAL VERSION 3.2</div>
+    <div>PORTAL v4.0</div>
 </div>
 
-<!-- Navigation Header -->
+<!-- Header Navigation -->
 <nav>
     <div class="brand-box">
-        <!-- Built-in Reliable FC Logo SVG (Never Breaks!) -->
-        <svg class="brand-logo" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="100" rx="15" fill="#0A0D12"/>
-            <path d="M20 20H80V35H38V48H72V62H38V80H20V20Z" fill="white"/>
-            <path d="M78 80C65 80 58 72 58 58C58 44 65 36 78 36H82V50H77C74 50 72 53 72 58C72 63 74 66 77 66H82V80H78Z" fill="#A0A5B5"/>
-            <rect x="15" y="86" width="30" height="4" fill="#FF2A4B"/>
-            <rect x="55" y="86" width="30" height="4" fill="#0088FF"/>
-        </svg>
+        <!-- EXACT DISCORD LOGO -->
+        <img id="logoNav" class="brand-logo" alt="FC Logo">
         <div class="brand-text">
             <h2>FURYCRAFT</h2>
             <p>Roleplay Network</p>
@@ -362,9 +413,9 @@
     </div>
 
     <div class="nav-links">
-        <button class="nav-btn active" onclick="showTab('home', this)">Home</button>
-        <button class="nav-btn" onclick="showTab('rules', this)">Server Rules</button>
-        <button class="nav-btn" onclick="showTab('apply', this)">Whitelist</button>
+        <button class="nav-btn active" onclick="switchTab('home', 'bg-home', this)">Home</button>
+        <button class="nav-btn" onclick="switchTab('rules', 'bg-rules', this)">Rules</button>
+        <button class="nav-btn" onclick="switchTab('apply', 'bg-apply', this)">Whitelist</button>
     </div>
 </nav>
 
@@ -372,54 +423,50 @@
     <!-- PAGE 1: HOME -->
     <div id="home" class="page active">
         <div class="glass-panel" style="text-align: center;">
-            <div class="police-stripe"></div>
+            <div class="police-strobe-bar"></div>
             
-            <svg style="width: 90px; height: 90px; margin-bottom: 10px;" viewBox="0 0 100 100" fill="none">
-                <rect width="100" height="100" rx="20" fill="#000" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
-                <path d="M20 20H80V35H38V48H72V62H38V80H20V20Z" fill="white"/>
-                <path d="M78 80C65 80 58 72 58 58C58 44 65 36 78 36H82V50H77C74 50 72 53 72 58C72 63 74 66 77 66H82V80H78Z" fill="#A0A5B5"/>
-            </svg>
+            <img id="logoHero" class="hero-logo-large" alt="FC Big Logo">
 
             <h1 class="hero-title">CITIZEN PORTAL</h1>
-            <p class="hero-desc">Welcome to the official FuryCraft RP Whitelist portal. Register your character, complete the verification process, and receive your official digital Citizen ID card.</p>
+            <p class="hero-subtitle">Welcome to FuryCraft RP. Register your character, complete the verification process, and receive your official digital Citizen ID Card in Discord.</p>
 
             <div class="feature-grid">
                 <div class="feature-card">
-                    <h4>⚖️ Judicial System</h4>
-                    <p>Real court lawsuits, legal attorneys, and player judges.</p>
+                    <h4>⚖️ Judicial Courts</h4>
+                    <p>File lawsuits, hire attorneys, and settle civil claims in court.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>🚨 Public Safety</h4>
-                    <p>Custom LSPD, EMS Emergency, and Fire Department roles.</p>
+                    <h4>🚨 Emergency Services</h4>
+                    <p>Join the LSPD, EMS Doctors, or Fire & Rescue Divisions.</p>
                 </div>
                 <div class="feature-card">
-                    <h4>💼 Dynamic Economy</h4>
-                    <p>Player-owned businesses, taxi drivers, culinary chefs & bus transit.</p>
+                    <h4>💼 Civilian Economy</h4>
+                    <p>Run businesses, drive taxis, public buses, or culinary staff.</p>
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="showTab('apply', document.querySelectorAll('.nav-btn')[2])">Begin Whitelist Application</button>
+            <button class="btn-primary" onclick="switchTab('apply', 'bg-apply', document.querySelectorAll('.nav-btn')[2])">Start Whitelist Application</button>
         </div>
     </div>
 
     <!-- PAGE 2: RULES -->
     <div id="rules" class="page">
         <div class="glass-panel">
-            <div class="police-stripe"></div>
-            <h2 style="font-family:'Cinzel'; font-size:1.8rem; margin-bottom:20px;">CITY LAWS & GUIDELINES</h2>
+            <div class="police-strobe-bar"></div>
+            <h2 style="font-family:'Cinzel'; font-size:2rem; margin-bottom:20px; text-align:left;">CITY LAWS & GUIDELINES</h2>
             
-            <div style="display:flex; flex-direction:column; gap:16px;">
-                <div style="background:rgba(255,255,255,0.03); padding:18px; border-radius:10px; border-left:3px solid #fff;">
+            <div style="display:flex; flex-direction:column; gap:16px; text-align:left;">
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid #fff;">
                     <h4 style="color:#fff; margin-bottom:4px;">1. Value Your Life (NVL)</h4>
-                    <p style="color:var(--text-silver); font-size:0.9rem;">Your character must value their life at all times under threat of injury or deadly force.</p>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">You must value your character's life at all times when threatened with weapons or fatal situations.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:18px; border-radius:10px; border-left:3px solid var(--accent-red);">
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid var(--strobe-red);">
                     <h4 style="color:#fff; margin-bottom:4px;">2. Metagaming & Powergaming</h4>
-                    <p style="color:var(--text-silver); font-size:0.9rem;">Using external Discord information in-game or forcing RP actions without consent is strictly prohibited.</p>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">Using out-of-game Discord info or forcing actions on players without RP option is strictly forbidden.</p>
                 </div>
-                <div style="background:rgba(255,255,255,0.03); padding:18px; border-radius:10px; border-left:3px solid var(--accent-blue);">
-                    <h4 style="color:#fff; margin-bottom:4px;">3. Court & Legal Ethics</h4>
-                    <p style="color:var(--text-silver); font-size:0.9rem;">All lawsuits and civil claims must be filed through the official court system channel.</p>
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:12px; border-left:4px solid var(--strobe-blue);">
+                    <h4 style="color:#fff; margin-bottom:4px;">3. Court & Legal System Integrity</h4>
+                    <p style="color:var(--text-muted); font-size:0.9rem;">All lawsuits and civil lawsuits must be officially filed via the discord court system with evidence.</p>
                 </div>
             </div>
         </div>
@@ -428,9 +475,9 @@
     <!-- PAGE 3: WHITELIST FORM -->
     <div id="apply" class="page">
         <div class="glass-panel">
-            <div class="police-stripe"></div>
-            <h2 style="font-family:'Cinzel'; font-size:1.8rem; margin-bottom:6px;">WHITELIST APPLICATION</h2>
-            <p style="color:var(--text-silver); font-size:0.9rem; margin-bottom:30px;">Fill out your character details accurately. Once submitted, admins will review your request in staff logs.</p>
+            <div class="police-strobe-bar"></div>
+            <h2 style="font-family:'Cinzel'; font-size:2rem; margin-bottom:6px; text-align:left;">WHITELIST REGISTRATION</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:30px; text-align:left;">Fill out your gaming details below. Upon completion, admins will review your application in staff logs.</p>
 
             <form id="whitelistForm">
                 <div class="form-grid">
@@ -443,32 +490,32 @@
                         <label for="platform">Minecraft Platform *</label>
                         <select id="platform" required>
                             <option value="Java Edition">Minecraft Java Edition</option>
-                            <option value="Bedrock Edition">Minecraft Bedrock (Mobile/Xbox/PS/Win10)</option>
+                            <option value="Bedrock Edition">Minecraft Bedrock (Mobile/Console/Win10)</option>
                         </select>
                     </div>
 
                     <div class="field-group">
                         <label for="ign">In-Game Gamertag *</label>
-                        <input type="text" id="ign" placeholder="Exact Minecraft Name" required>
+                        <input type="text" id="ign" placeholder="Exact In-Game Name" required>
                     </div>
 
                     <div class="field-group">
-                        <label for="rpName">Roleplay Character Name *</label>
-                        <input type="text" id="rpName" placeholder="e.g. Alex Mercer" required>
+                        <label for="rpName">Character Name *</label>
+                        <input type="text" id="rpName" placeholder="e.g. Marcus Vance" required>
                     </div>
 
                     <div class="field-group">
                         <label for="age">Character Age *</label>
-                        <input type="text" id="age" placeholder="e.g. 25" required>
+                        <input type="text" id="age" placeholder="e.g. 24" required>
                     </div>
 
                     <div class="field-group full-width">
-                        <label for="backstory">Brief Character Story *</label>
-                        <textarea id="backstory" rows="4" placeholder="Describe your character's background and aspirations in FuryCraft RP..." required></textarea>
+                        <label for="backstory">Character Backstory Brief *</label>
+                        <textarea id="backstory" rows="4" placeholder="Briefly describe who your character is and their backstory in the city..." required></textarea>
                     </div>
                 </div>
 
-                <button type="submit" id="submitBtn" class="btn-primary" style="margin-top:25px;">Submit Registration</button>
+                <button type="submit" id="submitBtn" class="btn-primary" style="margin-top:25px;">Submit Whitelist Application</button>
             </form>
 
             <div id="toast" class="toast"></div>
@@ -480,12 +527,28 @@
     // Paste your Discord Webhook URL here
     const WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL_HERE";
 
-    function showTab(tabId, btn) {
+    // EXACT IMAGE HOSTING (Imgur direct image source to ensure 100% uptime)
+    const EXACT_LOGO_URL = "https://i.ibb.co/3sX8M8z/Picsart-26-07-27-22-52-13-376.jpg";
+    document.getElementById('logoNav').src = EXACT_LOGO_URL;
+    document.getElementById('logoHero').src = EXACT_LOGO_URL;
+
+    // DYNAMIC TAB & MINECRAFT BACKGROUND SWITCHER
+    function switchTab(pageId, bgId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        
-        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('.mc-bg').forEach(bg => {
+            bg.style.opacity = '0';
+            bg.style.transform = 'scale(1.05)';
+        });
+
+        document.getElementById(pageId).classList.add('active');
         if(btn) btn.classList.add('active');
+
+        const activeBg = document.getElementById(bgId);
+        if(activeBg) {
+            activeBg.style.opacity = '1';
+            activeBg.style.transform = 'scale(1)';
+        }
     }
 
     document.getElementById('whitelistForm').addEventListener('submit', async (e) => {
@@ -494,7 +557,7 @@
         const toast = document.getElementById('toast');
 
         submitBtn.disabled = true;
-        submitBtn.innerText = "TRANSMITTING DATA...";
+        submitBtn.innerText = "TRANSMITTING REGISTRATION...";
 
         const payload = {
             discord_id: document.getElementById('discordId').value.trim(),
@@ -513,7 +576,7 @@
                     content: "📥 **NEW WEB WHITELIST SUBMISSION**",
                     embeds: [{
                         title: "📝 FuryCraft Web Whitelist Form",
-                        color: 0, // Pure Black Accent
+                        color: 0,
                         fields: [
                             { name: "Discord ID", value: `<@${payload.discord_id}> (${payload.discord_id})`, inline: true },
                             { name: "Platform", value: payload.platform, inline: true },
@@ -522,14 +585,14 @@
                             { name: "Age", value: payload.age, inline: true },
                             { name: "Backstory Brief", value: payload.backstory, inline: false }
                         ],
-                        footer: { text: "FuryCraft Official Whitelist Portal" }
+                        footer: { text: "FuryCraft Whitelist Portal" }
                     }]
                 })
             });
 
             if(res.ok) {
                 toast.className = "toast success";
-                toast.innerText = "✅ Application Logged! Check your Discord DMs for updates.";
+                toast.innerText = "✅ Registration Submitted! Check your Discord DMs for updates.";
                 toast.style.display = "block";
                 document.getElementById('whitelistForm').reset();
             } else {
@@ -541,7 +604,7 @@
             toast.style.display = "block";
         } finally {
             submitBtn.disabled = false;
-            submitBtn.innerText = "SUBMIT REGISTRATION";
+            submitBtn.innerText = "SUBMIT WHITELIST APPLICATION";
         }
     });
 </script>
