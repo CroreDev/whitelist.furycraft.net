@@ -1,0 +1,1 @@
+# whitelist.furycraft.net
