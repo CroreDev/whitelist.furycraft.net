@@ -518,12 +518,12 @@
 </main>
 
 <script>
-    // Paste your Discord Webhook URL here
-    const WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL_HERE";
+    // PRE-CONFIGURED DISCORD WEBHOOK URL
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1532595835328790538/IbWtA468TSq7Z30ayDV9iFgiaPsNLZwzneyoEo70nonBaya02AI7OuURAWTwlvvLfsU8";
 
     // Fallback vector icon if logo.jpg isn't uploaded yet
     function handleImageError(imgElement) {
-        imgElement.onerror = null; // Prevents infinite loop
+        imgElement.onerror = null;
         imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold' font-size='35'>FC</text></svg>";
     }
 
@@ -571,23 +571,24 @@
                     content: "📥 **NEW WEB WHITELIST SUBMISSION**",
                     embeds: [{
                         title: "📝 FuryCraft Web Whitelist Form",
-                        color: 0,
+                        color: 16711747, // Police Red Accent
                         fields: [
-                            { name: "Discord ID", value: `<@${payload.discord_id}> (${payload.discord_id})`, inline: true },
+                            { name: "Discord User", value: `<@${payload.discord_id}> (\`${payload.discord_id}\`)`, inline: true },
                             { name: "Platform", value: payload.platform, inline: true },
                             { name: "In-Game Name", value: `\`${payload.ign}\``, inline: true },
                             { name: "Character Name", value: payload.rp_name, inline: true },
-                            { name: "Age", value: payload.age, inline: true },
+                            { name: "Character Age", value: payload.age, inline: true },
                             { name: "Backstory Brief", value: payload.backstory, inline: false }
                         ],
-                        footer: { text: "FuryCraft Whitelist Portal" }
+                        footer: { text: "FuryCraft Roleplay • Citizen Verification" },
+                        timestamp: new Date().toISOString()
                     }]
                 })
             });
 
-            if(res.ok) {
+            if(res.ok || res.status === 204) {
                 toast.className = "toast success";
-                toast.innerText = "✅ Registration Submitted! Check your Discord DMs for updates.";
+                toast.innerText = "✅ Application Submitted! Your details are now in the Discord logs.";
                 toast.style.display = "block";
                 document.getElementById('whitelistForm').reset();
             } else {
@@ -595,7 +596,7 @@
             }
         } catch(err) {
             toast.className = "toast error";
-            toast.innerText = "❌ Submission failed. Check your Webhook URL or Discord User ID.";
+            toast.innerText = "❌ Submission failed. Please double-check your Discord User ID.";
             toast.style.display = "block";
         } finally {
             submitBtn.disabled = false;
