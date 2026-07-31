@@ -518,16 +518,16 @@
 </main>
 
 <script>
-    // PRE-CONFIGURED DISCORD WEBHOOK URL
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1532595835328790538/IbWtA468TSq7Z30ayDV9iFgiaPsNLZwzneyoEo70nonBaya02AI7OuURAWTwlvvLfsU8";
+    // ⚠️ REPLACE THIS STRING WITH YOUR BRAND NEW DISCORD WEBHOOK URL ⚠️
+    const WEBHOOK_URL = "PASTE_YOUR_NEW_DISCORD_WEBHOOK_URL_HERE";
 
-    // Fallback vector icon if logo.jpg isn't uploaded yet
+    // Fallback logo generator if logo.jpg isn't found
     function handleImageError(imgElement) {
         imgElement.onerror = null;
         imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold' font-size='35'>FC</text></svg>";
     }
 
-    // DYNAMIC TAB & MINECRAFT BACKGROUND SWITCHER
+    // DYNAMIC TAB SWITCHER
     function switchTab(pageId, bgId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -546,6 +546,7 @@
         }
     }
 
+    // SUBMIT FORM TO DISCORD
     document.getElementById('whitelistForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -563,40 +564,43 @@
             backstory: document.getElementById('backstory').value.trim()
         };
 
+        const discordPayload = {
+            content: "📥 **NEW WEB WHITELIST SUBMISSION**",
+            embeds: [{
+                title: "📝 FuryCraft Web Whitelist Form",
+                color: 16711747,
+                fields: [
+                    { name: "Discord User", value: `<@${payload.discord_id}> (\`${payload.discord_id}\`)`, inline: true },
+                    { name: "Platform", value: payload.platform, inline: true },
+                    { name: "In-Game Name", value: `\`${payload.ign}\``, inline: true },
+                    { name: "Character Name", value: payload.rp_name, inline: true },
+                    { name: "Character Age", value: payload.age, inline: true },
+                    { name: "Backstory Brief", value: payload.backstory, inline: false }
+                ],
+                footer: { text: "FuryCraft Roleplay • Citizen Verification" },
+                timestamp: new Date().toISOString()
+            }]
+        };
+
         try {
             const res = await fetch(WEBHOOK_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    content: "📥 **NEW WEB WHITELIST SUBMISSION**",
-                    embeds: [{
-                        title: "📝 FuryCraft Web Whitelist Form",
-                        color: 16711747, // Police Red Accent
-                        fields: [
-                            { name: "Discord User", value: `<@${payload.discord_id}> (\`${payload.discord_id}\`)`, inline: true },
-                            { name: "Platform", value: payload.platform, inline: true },
-                            { name: "In-Game Name", value: `\`${payload.ign}\``, inline: true },
-                            { name: "Character Name", value: payload.rp_name, inline: true },
-                            { name: "Character Age", value: payload.age, inline: true },
-                            { name: "Backstory Brief", value: payload.backstory, inline: false }
-                        ],
-                        footer: { text: "FuryCraft Roleplay • Citizen Verification" },
-                        timestamp: new Date().toISOString()
-                    }]
-                })
+                body: JSON.stringify(discordPayload)
             });
 
             if(res.ok || res.status === 204) {
                 toast.className = "toast success";
-                toast.innerText = "✅ Application Submitted! Your details are now in the Discord logs.";
+                toast.innerText = "✅ Application Submitted! Check your Discord logs.";
                 toast.style.display = "block";
                 document.getElementById('whitelistForm').reset();
             } else {
-                throw new Error();
+                throw new Error("Discord status: " + res.status);
             }
         } catch(err) {
+            console.error(err);
             toast.className = "toast error";
-            toast.innerText = "❌ Submission failed. Please double-check your Discord User ID.";
+            toast.innerText = "❌ Submission failed. Please generate a NEW Webhook URL in Discord Settings.";
             toast.style.display = "block";
         } finally {
             submitBtn.disabled = false;
