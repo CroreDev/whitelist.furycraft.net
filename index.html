@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FuryCraft RP — Official Citizen & Whitelist Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;600;800&family=Press+Start+2P&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #07090e;
-            --panel-bg: rgba(12, 16, 24, 0.82);
+            --panel-bg: rgba(12, 16, 24, 0.85);
             --panel-border: rgba(255, 255, 255, 0.15);
             --text-white: #ffffff;
             --text-muted: #9aa3b4;
@@ -51,18 +51,18 @@
 
         /* Per-Page Minecraft Landscapes */
         #bg-home {
-            background-image: url('https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=1920&auto=format&fit=crop'); /* Minecraft Night Scene */
+            background-image: url('https://images.unsplash.com/photo-1627856013091-fed6e4e30025?q=80&w=1920&auto=format&fit=crop');
             opacity: 1;
             transform: scale(1);
         }
         #bg-rules {
-            background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920&auto=format&fit=crop'); /* Deep Nether / Obsidian Vibe */
+            background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1920&auto=format&fit=crop');
         }
         #bg-apply {
-            background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1920&auto=format&fit=crop'); /* Ender Void Theme */
+            background-image: url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=1920&auto=format&fit=crop');
         }
 
-        /* Animated Pixel Particle Overlay */
+        /* Animated Pixel Grid Overlay */
         .pixel-grid {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -125,7 +125,6 @@
             gap: 16px;
         }
 
-        /* Exact Logo Styling */
         .brand-logo {
             width: 52px;
             height: 52px;
@@ -134,6 +133,7 @@
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255,255,255,0.2);
             object-fit: cover;
             transition: transform 0.3s ease;
+            background-color: #000;
         }
 
         .brand-logo:hover {
@@ -186,7 +186,7 @@
             box-shadow: inset 0 0 12px rgba(255,255,255,0.1);
         }
 
-        /* Main Container & Glass Panels */
+        /* Main Glass Panels */
         main {
             width: 100%;
             max-width: 900px;
@@ -218,7 +218,6 @@
             overflow: hidden;
         }
 
-        /* Police Lightbar Top Strobe Animation */
         .police-strobe-bar {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 4px;
@@ -226,7 +225,6 @@
             box-shadow: 0 0 15px var(--strobe-red), 0 0 15px var(--strobe-blue);
         }
 
-        /* Hero Banner */
         .hero-logo-large {
             width: 140px;
             height: 140px;
@@ -235,6 +233,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.9), 0 0 30px rgba(255,255,255,0.15);
             margin-bottom: 20px;
             object-fit: cover;
+            background-color: #000;
         }
 
         .hero-title {
@@ -256,7 +255,6 @@
             line-height: 1.6;
         }
 
-        /* Feature Grid */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -291,7 +289,6 @@
             line-height: 1.4;
         }
 
-        /* Forms Layout */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -341,7 +338,6 @@
             background: #000;
         }
 
-        /* Aesthetic Action Button */
         .btn-primary {
             width: 100%;
             padding: 18px;
@@ -365,7 +361,6 @@
             box-shadow: 0 15px 40px rgba(255, 255, 255, 0.35);
         }
 
-        /* Alert Toast */
         .toast {
             display: none;
             padding: 16px 20px;
@@ -401,11 +396,10 @@
     <div>PORTAL v4.0</div>
 </div>
 
-<!-- Header Navigation -->
+<!-- Navigation Header -->
 <nav>
     <div class="brand-box">
-        <!-- EXACT DISCORD LOGO -->
-        <img id="logoNav" class="brand-logo" alt="FC Logo">
+        <img id="logoNav" class="brand-logo" src="logo.jpg" alt="FC Logo" onerror="handleImageError(this)">
         <div class="brand-text">
             <h2>FURYCRAFT</h2>
             <p>Roleplay Network</p>
@@ -425,7 +419,7 @@
         <div class="glass-panel" style="text-align: center;">
             <div class="police-strobe-bar"></div>
             
-            <img id="logoHero" class="hero-logo-large" alt="FC Big Logo">
+            <img id="logoHero" class="hero-logo-large" src="logo.jpg" alt="FC Big Logo" onerror="handleImageError(this)">
 
             <h1 class="hero-title">CITIZEN PORTAL</h1>
             <p class="hero-subtitle">Welcome to FuryCraft RP. Register your character, complete the verification process, and receive your official digital Citizen ID Card in Discord.</p>
@@ -527,10 +521,11 @@
     // Paste your Discord Webhook URL here
     const WEBHOOK_URL = "YOUR_DISCORD_WEBHOOK_URL_HERE";
 
-    // EXACT IMAGE HOSTING (Imgur direct image source to ensure 100% uptime)
-    const EXACT_LOGO_URL = "https://i.ibb.co/3sX8M8z/Picsart-26-07-27-22-52-13-376.jpg";
-    document.getElementById('logoNav').src = EXACT_LOGO_URL;
-    document.getElementById('logoHero').src = EXACT_LOGO_URL;
+    // Fallback vector icon if logo.jpg isn't uploaded yet
+    function handleImageError(imgElement) {
+        imgElement.onerror = null; // Prevents infinite loop
+        imgElement.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='sans-serif' font-weight='bold' font-size='35'>FC</text></svg>";
+    }
 
     // DYNAMIC TAB & MINECRAFT BACKGROUND SWITCHER
     function switchTab(pageId, bgId, btn) {
